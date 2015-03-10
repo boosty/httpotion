@@ -58,6 +58,10 @@ defmodule HTTPotion.Base do
         end
       end
 
+      defp error_to_string(error) do
+        if is_atom(error) or String.valid?(error), do: to_string(error), else: inspect(error)
+      end
+
       @doc """
       Sends an HTTP request.
       Args:
@@ -96,11 +100,11 @@ defmodule HTTPotion.Base do
           { :ibrowse_req_id, id } ->
             %HTTPotion.AsyncResponse{ id: id }
           { :error, { :conn_failed, { :error, reason }}} ->
-            raise HTTPotion.HTTPError, message: to_string(reason)
+            raise HTTPotion.HTTPError, message: error_to_string(reason)
           { :error, :conn_failed } ->
             raise HTTPotion.HTTPError, message: "conn_failed"
           { :error, reason } ->
-            raise HTTPotion.HTTPError, message: to_string(reason)
+            raise HTTPotion.HTTPError, message: error_to_string(reason)
         end
       end
 
